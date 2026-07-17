@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Aura">
@@ -17,8 +17,9 @@
   --border:rgba(201,168,76,.2);--green:#30D158;--red:#FF3B30;
   --safe-b:env(safe-area-inset-bottom,16px)
 }
-html,body{height:100%;background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;overflow:hidden}
-#app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
+html{height:100%;overflow:hidden;overscroll-behavior:none}
+body{height:100%;height:100dvh;background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;overflow:hidden;position:fixed;inset:0;width:100%;overscroll-behavior:none;touch-action:manipulation}
+#app{display:flex;flex-direction:column;height:100%;height:100dvh;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
 .screen{display:none;flex:1;flex-direction:column;overflow:hidden}
 .screen.active{display:flex}
 .scroll{overflow-y:auto;flex:1}.scroll::-webkit-scrollbar{display:none}
@@ -729,7 +730,7 @@ function getVoice(){
 function previewVoice(){
   const sel=document.getElementById('v-voice');
   if(sel)S.voiceName=sel.value;save();
-  tts(`Hey ${S.userName}, it's ${S.gfName}. How do I sound? I could talk to you all day.`);
+  tts(`Hey ${S.userName}, it's ${S.gfName}. How do I sound? I could talk to you all day.`,null,true);
 }
 synth.onvoiceschanged=()=>{populateVoiceList();};
 setTimeout(populateVoiceList,500);
@@ -813,7 +814,8 @@ async function piperSpeak(text,onEnd){
   }catch(e){return false;}
 }
 
-async function tts(text,onEnd){
+async function tts(text,onEnd,force){
+  if(!callActive&&!force){if(onEnd)onEnd();return;}
   stopSpeaking();
   if(S.piperEnabled){
     const ok=await piperSpeak(text,onEnd);
