@@ -1,0 +1,2 @@
+# Aura-Companion
+companion bot
